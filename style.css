@@ -1,0 +1,622 @@
+/* Global and Resets */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+:root {
+    --bg-dark: #0f172a;
+    --sidebar-bg: #1e293b;
+    --card-bg: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-color: #3b82f6;
+    --accent-hover: #2563eb;
+    --danger-color: #ef4444;
+    --shape-bg: #e2e8f0;
+    --shape-border: #94a3b8;
+    --shape-text: #0f172a;
+    --line-color: #cbd5e1;
+}
+
+body.light-mode {
+    --bg-dark: #f8fafc;
+    --sidebar-bg: #ffffff;
+    --card-bg: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --accent-color: #3b82f6;
+    --accent-hover: #2563eb;
+    --danger-color: #ef4444;
+    --shape-bg: #ffffff;
+    --shape-border: #64748b;
+    --shape-text: #0f172a;
+    --line-color: #64748b;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden; /* Avoid scrolls for the entire app */
+}
+
+/* App Layout */
+.app-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    height: 60px;
+    background-color: var(--sidebar-bg);
+    border-bottom: 1px solid var(--card-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--accent-color);
+}
+
+.properties-toolbar {
+    display: none;
+    align-items: center;
+    gap: 1.5rem;
+    background-color: var(--card-bg);
+    padding: 0.25rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.properties-toolbar.visible {
+    display: flex;
+}
+
+.prop-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.prop-group input[type="color"] {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: transparent;
+}
+
+.prop-group input[type="number"] {
+    width: 50px;
+    background-color: var(--bg-dark);
+    border: 1px solid var(--shape-border);
+    color: var(--text-primary);
+    border-radius: 4px;
+    padding: 0.2rem 0.4rem;
+    font-size: 0.85rem;
+}
+
+.prop-group select {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--shape-border);
+    color: var(--text-primary);
+    border-radius: 4px;
+    padding: 0.2rem 0.4rem;
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-secondary {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    margin-right: 0.5rem;
+}
+
+.btn-secondary:hover {
+    background-color: #475569;
+}
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.25rem;
+    background-color: var(--sidebar-bg);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+    z-index: 100;
+    border: 1px solid var(--card-bg);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.dropdown-content a {
+    color: var(--text-primary);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 0.85rem;
+}
+
+.dropdown-content a:hover {
+    background-color: var(--card-bg);
+    color: var(--accent-color);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Main Workspace */
+.main-workspace {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--card-bg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    z-index: 5;
+}
+
+.sidebar-header {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+}
+
+.shape-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.shape-item {
+    width: calc(50% - 0.5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: grab;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.shape-item:hover {
+    background-color: var(--card-bg);
+    border-color: var(--accent-color);
+}
+
+.shape-item:active {
+    cursor: grabbing;
+}
+
+.shape-item span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Shape Previews in Sidebar */
+.shape-preview {
+    background-color: var(--shape-bg);
+    border: 2px solid var(--shape-border);
+}
+
+.shape-preview.rect {
+    width: 40px;
+    height: 30px;
+    border-radius: 4px;
+}
+
+.shape-preview.circ {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.shape-preview.diam {
+    width: 32px;
+    height: 32px;
+    transform: rotate(45deg);
+    margin: 4px;
+}
+
+.shape-preview.pill {
+    width: 40px;
+    height: 20px;
+    border-radius: 10px;
+}
+
+.shape-preview.para {
+    width: 36px;
+    height: 24px;
+    transform: skew(-20deg);
+}
+
+.shape-preview.text-shape {
+    width: 40px;
+    height: 30px;
+    background: transparent;
+    border: 1px dashed var(--shape-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.shape-preview.hex {
+    width: 40px;
+    height: 30px;
+    clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%);
+}
+
+.shape-preview.doc {
+    width: 40px;
+    height: 30px;
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 75% 100%, 25% 85%, 0 100%);
+}
+
+.shape-preview.delay {
+    width: 40px;
+    height: 30px;
+    border-radius: 0 15px 15px 0;
+}
+
+.shape-preview.disp {
+    width: 40px;
+    height: 30px;
+    clip-path: polygon(0 50%, 25% 0, 100% 0, 100% 100%, 25% 100%);
+}
+
+.instructions p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+/* Canvas Area */
+.canvas-container {
+    flex: 1;
+    position: relative;
+    background-color: var(--bg-dark);
+    /* Subtle dot grid pattern */
+    background-image: radial-gradient(var(--card-bg) 1px, transparent 1px);
+    background-size: 20px 20px;
+    overflow: auto;
+}
+
+.canvas {
+    width: 4000px;
+    height: 4000px;
+    position: relative;
+    transform-origin: 0 0;
+}
+
+/* Connection Details (SVG) */
+#connection-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.connection {
+    fill: none;
+    stroke: var(--line-color);
+    stroke-width: 2.5;
+    transition: stroke 0.2s;
+    pointer-events: stroke; /* allow clicks on stroke */
+    cursor: pointer;
+}
+
+.connection:hover {
+    stroke: var(--accent-color);
+    stroke-width: 4;
+}
+
+.connection.selected {
+    stroke: var(--accent-hover);
+    stroke-dasharray: 5,5;
+}
+
+.drafting {
+    stroke: var(--accent-color);
+    stroke-dasharray: 5,5;
+    marker-end: url(#arrow-end);
+}
+
+.marker-path {
+    fill: var(--line-color);
+}
+.connection.selected + marker .marker-path, /* Fallback concept, usually set via JS */
+.connection:hover + marker .marker-path { 
+    fill: var(--accent-hover); 
+}
+
+/* Line Labels */
+.line-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background-color: transparent;
+    color: var(--text-primary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: text;
+    z-index: 5;
+    outline: none;
+    min-width: 20px;
+    min-height: 20px;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.line-label:not(:empty) {
+    background-color: var(--bg-dark);
+}
+
+.line-label:empty:hover,
+.line-label:focus {
+    border: 1px dashed var(--shape-border);
+}
+
+.line-label.selected {
+    border: 1px dashed var(--accent-color);
+}
+
+/* Line Drag Handles */
+.line-handle {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    border: 2px solid var(--accent-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: move;
+    z-index: 6;
+    display: none;
+}
+
+.line-handle.bend-handle {
+    border-color: #f59e0b; /* Orange bend handle */
+    width: 12px;
+    height: 12px;
+    cursor: pointer;
+}
+
+.line-handle.visible {
+    display: block;
+}
+
+/* Dropped Shapes on Canvas */
+.canvas-shape {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--shape-bg);
+    border: 2px solid var(--shape-border);
+    color: var(--shape-text);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: move;
+    z-index: 2;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s, border-color 0.2s;
+    user-select: none;
+}
+
+.canvas-shape:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+.canvas-shape.selected {
+    border-color: var(--accent-color);
+    outline: 2px solid rgba(59, 130, 246, 0.3);
+    outline-offset: 2px;
+}
+
+.canvas-shape.is-rect {
+    width: 120px;
+    height: 80px;
+    border-radius: 6px;
+}
+
+.canvas-shape.is-circ {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.canvas-shape.is-diam {
+    width: 100px;
+    height: 100px;
+    transform: rotate(45deg);
+}
+
+.canvas-shape.is-pill {
+    width: 120px;
+    height: 60px;
+    border-radius: 30px;
+}
+
+.canvas-shape.is-para {
+    width: 120px;
+    height: 80px;
+    transform: skew(-20deg);
+}
+
+.canvas-shape.is-hex {
+    width: 120px;
+    height: 80px;
+    clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%);
+    border: none;
+}
+
+.canvas-shape.is-doc {
+    width: 120px;
+    height: 80px;
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 75% 100%, 25% 85%, 0 100%);
+    border: none;
+}
+
+.canvas-shape.is-delay {
+    width: 120px;
+    height: 80px;
+    border-radius: 0 40px 40px 0;
+}
+
+.canvas-shape.is-disp {
+    width: 120px;
+    height: 80px;
+    clip-path: polygon(0 50%, 25% 0, 100% 0, 100% 100%, 25% 100%);
+    border: none;
+}
+
+.canvas-shape.is-text {
+    width: 120px;
+    height: 40px;
+    background: transparent;
+    border: 1px dashed transparent;
+    box-shadow: none;
+    font-weight: bold;
+}
+
+.canvas-shape.is-text:hover {
+    border: 1px dashed var(--shape-border);
+    box-shadow: none;
+}
+
+/* Unrotate/Unskew texts */
+.canvas-shape.is-diam span {
+    transform: rotate(-45deg);
+    display: block;
+}
+
+.canvas-shape.is-para span {
+    transform: skew(20deg);
+    display: block;
+}
+
+/* Editable text */
+.canvas-shape .shape-text {
+    outline: none;
+    text-align: center;
+    max-width: 90%;
+    word-wrap: break-word;
+    cursor: text;
+}
+
+.canvas-shape.is-diam .shape-text {
+    max-width: 70%;
+}
+
+/* Connecting Ports */
+.port {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: var(--accent-color);
+    border: 3px solid white;
+    border-radius: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: all 0.2s;
+    cursor: crosshair;
+    z-index: 10;
+}
+
+.canvas-shape:hover .port,
+.canvas-shape.selected .port,
+body.is-drawing .port {
+    opacity: 1;
+}
+
+/* Enlarge ports drastically when drawing to make connections easy */
+body.is-drawing .port {
+    transform: translate(-50%, -50%) scale(1.5);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+}
+
+/* Resize Handle */
+.resize-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    right: -6px;
+    bottom: -6px;
+    background-color: white;
+    border: 2px solid var(--accent-color);
+    border-radius: 50%;
+    cursor: se-resize;
+    display: none;
+    z-index: 10;
+}
+
+.canvas-shape.selected .resize-handle {
+    display: block;
+}
+
+/* Port positions */
+.port-top { top: 0; left: 50%; }
+.port-right { top: 50%; left: 100%; }
+.port-bottom { top: 100%; left: 50%; }
+.port-left { top: 50%; left: 0; }

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LucidClone - Diagram Maker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+                <span>LucidClone</span>
+            </div>
+            
+            <!-- Properties Toolbar (Hidden when nothing selected) -->
+            <div class="properties-toolbar" id="properties-toolbar">
+                <div class="prop-group">
+                    <label for="fill-color">Fill</label>
+                    <input type="color" id="fill-color" value="#e2e8f0">
+                </div>
+                <div class="prop-group">
+                    <label for="text-color">Text</label>
+                    <input type="color" id="text-color" value="#0f172a">
+                </div>
+                <div class="prop-group">
+                    <label for="font-size">Size</label>
+                    <input type="number" id="font-size" value="14" min="8" max="72">
+                <div class="prop-group" id="line-props" style="display:none;">
+                    <label for="line-dir">Ends</label>
+                    <select id="line-dir">
+                        <option value="end">End</option>
+                        <option value="start">Start</option>
+                        <option value="both">Both</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="toolbar-actions">
+                <input type="file" id="import-btn" accept=".mino" style="display:none;">
+                <button id="import-trigger" class="btn btn-secondary">Import .mino</button>
+                
+                <div class="dropdown">
+                    <button id="download-btn" class="btn btn-primary">Download ▼</button>
+                    <div class="dropdown-content">
+                        <a href="#" id="export-image">As Image (PNG)</a>
+                        <a href="#" id="export-mino">As File (.mino)</a>
+                    </div>
+                </div>
+                
+                <button id="clear-btn" class="btn btn-danger" style="background-color: var(--danger-color); color: white; margin-left: 0.5rem; border: none; padding: 0.5rem 1rem; border-radius: 0.375rem; cursor: pointer;">Clear Canvas</button>
+                <button id="theme-toggle" class="btn btn-secondary" style="margin-left: 0.5rem; border: none; padding: 0.5rem 1rem; border-radius: 0.375rem; cursor: pointer; background-color: var(--card-bg); color: var(--text-primary);">☀️ Light</button>
+            </div>
+        </header>
+
+        <div class="main-workspace">
+            <!-- Sidebar with shapes -->
+            <aside class="sidebar">
+                <div class="sidebar-header">Shapes</div>
+                <div class="shape-list">
+                    <div class="shape-item template-shape" draggable="true" data-type="rectangle">
+                        <div class="shape-preview rect"></div>
+                        <span>Rectangle</span>
+                    </div>
+                    <div class="shape-item template-shape" draggable="true" data-type="pill">
+                        <div class="shape-preview pill"></div>
+                        <span>Pill/Terminator</span>
+                    </div>
+                    <div class="shape-item template-shape" draggable="true" data-type="diamond">
+                        <div class="shape-preview diam"></div>
+                        <span>Decision</span>
+                    </div>
+                    <div class="shape-item template-shape" draggable="true" data-type="parallelogram">
+                        <div class="shape-preview para"></div>
+                        <span>Input/Output</span>
+                    </div>
+                    <div class="shape-item template-shape" draggable="true" data-type="hexagon">
+                        <div class="shape-preview hex"></div>
+                        <span>Preparation</span>
+                    </div>
+                    <div class="shape-item template-shape" draggable="true" data-type="document">
+                        <div class="shape-preview doc"></div>
+                        <span>Document</span>
+                    </div>
+                    <div class="shape-item template-shape" draggable="true" data-type="delay">
+                        <div class="shape-preview delay"></div>
+                        <span>Delay</span>
+                    </div>
+                    <div class="shape-item template-shape" draggable="true" data-type="display">
+                        <div class="shape-preview disp"></div>
+                        <span>Display</span>
+                    </div>
+                    <div class="shape-item template-shape" draggable="true" data-type="circle">
+                        <div class="shape-preview circ"></div>
+                        <span>Circle</span>
+                    </div>
+                    <div class="shape-item template-shape" draggable="true" data-type="arrow">
+                        <div class="shape-preview text-shape" style="font-size: 1.2rem; border: none;">🡒</div>
+                        <span>Arrow</span>
+                    </div>
+                    <div class="shape-item template-shape" draggable="true" data-type="text">
+                        <div class="shape-preview text-shape">T</div>
+                        <span>Text Box</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-header" style="margin-top: 2rem;">Instructions</div>
+                <div class="instructions">
+                    <p>1. Drag shapes/arrows to canvas.</p>
+                    <p>2. Drag line ends near a shape to auto-snap.</p>
+                    <p>3. Select a line to show bend handles.</p>
+                    <p>4. Double-click line center to add text.</p>
+                    <p>5. Double-click bend handle to reset line.</p>
+                </div>
+            </aside>
+
+            <!-- Canvas Area -->
+            <main class="canvas-container">
+                <div id="canvas" class="canvas">
+                    <!-- SVG layer for connections -->
+                    <svg id="connection-layer">
+                        <defs>
+                            <marker id="arrow-end" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#cbd5e1" class="marker-path" />
+                            </marker>
+                            <marker id="arrow-start" viewBox="0 0 10 10" refX="0" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M 10 0 L 0 5 L 10 10 z" fill="#cbd5e1" class="marker-path" />
+                            </marker>
+                        </defs>
+                        <!-- Dynamic lines will go here -->
+                        <path id="drawing-line" class="connection drafting" d="" />
+                    </svg>
+                    <!-- Draggable elements will be appended here -->
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
